@@ -1,6 +1,8 @@
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Comparator;
+import java.util.Collections;
 
 public class Ride implements RideInterface {
 
@@ -63,6 +65,11 @@ public class Ride implements RideInterface {
             Visitor v = iterator.next();
             System.out.println(v.getName() + " (" + v.getAge() + ")");
         }
+    }
+
+    // ===================== Part 4B: Sort History ======================
+    public void sortRideHistory(Comparator<Visitor> comparator) {
+        Collections.sort(rideHistory, comparator);
     }
 
     // ===================== Placeholder for Part 5 ======================

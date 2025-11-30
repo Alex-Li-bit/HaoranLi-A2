@@ -2,7 +2,7 @@ public class AssignmentTwo {
 
     public static void main(String[] args) {
 
-        // ========== Create Employee (Operator) ==========
+        // ========== Create Employee ==========
         Employee operator = new Employee("Alice", 30, "123456789", "Operator", 5000);
 
         // ========== Create Visitors ==========
@@ -28,7 +28,7 @@ public class AssignmentTwo {
         ride.removeVisitorFromQueue();
         ride.printQueue();
 
-        // ========== Part 4A: Ride History Test ==========
+        // ========== Part 4A: Ride History ==========
         System.out.println("\n=== Adding visitors to ride history ===");
         ride.addVisitorToHistory(v1);
         ride.addVisitorToHistory(v2);
@@ -36,13 +36,15 @@ public class AssignmentTwo {
         ride.addVisitorToHistory(v4);
         ride.addVisitorToHistory(v5);
 
-        System.out.println("\n=== Check if visitor exists in history ===");
-        System.out.println("Is Diana in history? " + ride.checkVisitorFromHistory(v3));
+        System.out.println("\n=== Printing ride history BEFORE sorting ===");
+        ride.printRideHistory();
 
-        System.out.println("\n=== Number of visitors in history ===");
-        System.out.println("Total visitors: " + ride.numberOfVisitors());
+        // ========== Part 4B: Sorting History ==========
+        System.out.println("\n=== Sorting ride history (by Name + Age) ===");
+        VisitorComparator comparator = new VisitorComparator();
+        ride.sortRideHistory(comparator);
 
-        System.out.println("\n=== Printing ride history ===");
+        System.out.println("\n=== Printing ride history AFTER sorting ===");
         ride.printRideHistory();
     }
 }
