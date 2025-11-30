@@ -1,19 +1,26 @@
 public class Visitor extends Person {
-
     private String ticketType;
-    private int height;
+    private double height;
 
     public Visitor() {}
 
-    public Visitor(String name, int age, String phone, String ticketType, int height) {
+    // Simple constructor used by import and many tests
+    public Visitor(String name, int age) {
+        super(name, age, "");
+        this.ticketType = "";
+        this.height = 0.0;
+    }
+
+    // Full constructor used in some tests
+    public Visitor(String name, int age, String phone, String ticketType, double height) {
         super(name, age, phone);
         this.ticketType = ticketType;
         this.height = height;
     }
 
     public String getTicketType() { return ticketType; }
-    public void setTicketType(String ticketType) { this.ticketType = ticketType; }
+    public double getHeight() { return height; }
 
-    public int getHeight() { return height; }
-    public void setHeight(int height) { this.height = height; }
+    public void setTicketType(String ticketType) { this.ticketType = ticketType; }
+    public void setHeight(double height) { this.height = height; }
 }

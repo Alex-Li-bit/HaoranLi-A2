@@ -1,80 +1,68 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Comparator;
-import java.util.Collections;
+import java.io.*;
+import java.util.*;
 
 public class Ride implements RideInterface {
 
     private String rideName;
     private Employee operator;
-    private int maxRider; // keep for later parts
 
-    private Queue<Visitor> waitQueue = new LinkedList<>();
+    private Queue<Visitor> queue = new LinkedList<>();
     private LinkedList<Visitor> rideHistory = new LinkedList<>();
+
+    private int maxRiders = 3;
+    private int numOfCycles = 0;
 
     public Ride(String rideName, Employee operator) {
         this.rideName = rideName;
         this.operator = operator;
-        this.maxRider = 0;
     }
 
-    public Ride(String rideName, Employee operator, int maxRider) {
-        this.rideName = rideName;
-        this.operator = operator;
-        this.maxRider = maxRider;
-    }
-
-    // ===== Getters/Setters =====
-    public String getRideName() { return rideName; }
-    public void setRideName(String rideName) { this.rideName = rideName; }
-
-    public Employee getOperator() { return operator; }
-    public void setOperator(Employee operator) { this.operator = operator; }
-
-    public int getMaxRider() { return maxRider; }
-    public void setMaxRider(int maxRider) { this.maxRider = maxRider; }
-
-    // ===================== Queue Methods ======================
+    // === Queue Methods ===
     @Override
     public void addVisitorToQueue(Visitor v) {
-        waitQueue.add(v);
+        queue.add(v);
     }
 
+    // Now returns the removed Visitor (or null if empty)
     @Override
-    public void removeVisitorFromQueue() {
-        Visitor removed = waitQueue.poll();
+    public Visitor removeVisitorFromQueue() {
+        Visitor removed = queue.poll();
         if (removed != null) {
             System.out.println("Removed from queue: " + removed.getName());
         } else {
             System.out.println("Queue is empty.");
         }
+        return removed;
     }
 
     @Override
     public void printQueue() {
         System.out.println("Visitor Queue:");
-        if (waitQueue.isEmpty()) {
+        if (queue.isEmpty()) {
             System.out.println("(empty)");
             return;
         }
-        for (Visitor v : waitQueue) {
+        for (Visitor v : queue) {
             System.out.println(v.getName() + " (" + v.getAge() + ")");
         }
     }
 
-    // ===================== Ride History Methods ======================
+    // === History Methods ===
     @Override
     public void addVisitorToHistory(Visitor v) {
-        rideHistory.add(v);
+        if (v != null) rideHistory.add(v);
     }
 
     @Override
     public boolean checkVisitorFromHistory(Visitor v) {
-        return rideHistory.contains(v);
+        if (v == null) return false;
+        for (Visitor visitor : rideHistory) {
+            if (visitor.getName().equalsIgnoreCase(v.getName())
+                    && visitor.getAge() == v.getAge()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -85,75 +73,122 @@ public class Ride implements RideInterface {
     @Override
     public void printRideHistory() {
         System.out.println("Ride History:");
-        Iterator<Visitor> iterator = rideHistory.iterator();
-        while (iterator.hasNext()) {
-            Visitor v = iterator.next();
+        Iterator<Visitor> it = rideHistory.iterator();
+        while (it.hasNext()) {
+            Visitor v = it.next();
             System.out.println(v.getName() + " (" + v.getAge() + ")");
         }
     }
 
-    // ===================== Part 4B: Sort History (kept) ======================
+    // === Part 4B Sort Method ===
     public void sortRideHistory(Comparator<Visitor> comparator) {
         Collections.sort(rideHistory, comparator);
     }
 
-    // ===================== Part 6: exportRideHistory ======================
-    /**
-     * Export the rideHistory LinkedList to a CSV file.
-     * Each line format: name,age,phone,ticketType,height
-     *
-     * @param filename name of the file to write (relative to working directory or absolute)
-     */
+    // === Part 5 runOneCycle ===
+    @Override
+    public void runOneCycle() {
+        if (operator == null) {
+            System.out.println("No operator assigned. Cannot run cycle.");
+            return;
+        }
+        if (queue.isEmpty()) {
+            System.out.println("Queue is empty. Nothing to run.");
+            return;
+        }
+
+        int riders = Math.min(maxRiders, queue.size());
+        for (int i = 0; i < riders; i++) {
+            Visitor v = queue.poll();
+            if (v != null) {
+                rideHistory.add(v);
+            }
+        }
+        numOfCycles++;
+        System.out.println("Cycle completed. Riders this cycle: " + riders + ". Total cycles: " + numOfCycles);
+    }
+
+    // === Part 6 Export CSV ===
     public void exportRideHistory(String filename) {
-        // Defensive check
         if (rideHistory.isEmpty()) {
             System.out.println("No ride history to export.");
             return;
         }
 
-        // Use try-with-resources for safe writer closing
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-            // Optional: write header (uncomment if you want header line)
-            // writer.println("name,age,phone,ticketType,height");
-
             for (Visitor v : rideHistory) {
-                // Build CSV line. Trim to avoid accidental spaces.
-                StringBuilder line = new StringBuilder();
-                line.append(safeCsv(v.getName())).append(",");
-                line.append(v.getAge()).append(",");
-                line.append(safeCsv(v.getPhone())).append(",");
-                line.append(safeCsv(v.getTicketType())).append(",");
-                line.append(v.getHeight());
-                writer.println(line.toString());
+                // Use name,age,phone,ticketType,height if available
+                String phone = (v.getPhone() == null) ? "" : v.getPhone();
+                String ticket = (v.getTicketType() == null) ? "" : v.getTicketType();
+                String height = String.valueOf(v.getHeight());
+                writer.println(escapeCsv(v.getName()) + "," + v.getAge() + "," + escapeCsv(phone) + "," + escapeCsv(ticket) + "," + height);
             }
-
             System.out.println("Ride history exported successfully to: " + filename);
         } catch (IOException e) {
-            System.out.println("Error exporting ride history: " + e.getMessage());
-            // Optionally print stack trace during debugging:
-            // e.printStackTrace();
+            System.out.println("Error exporting: " + e.getMessage());
         }
     }
 
-    // Helper to escape simple CSV issues (if value contains comma or quotes)
-    private String safeCsv(String value) {
+    // === Part 7 Import CSV ===
+    public void importRideHistory(String filename) {
+        rideHistory.clear();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Split on commas that are not inside quotes - simple approach assumes no commas in fields
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    String name = unescapeCsv(parts[0].trim());
+                    int age = Integer.parseInt(parts[1].trim());
+
+                    // if phone/ticket/height exist parse them, else use defaults
+                    String phone = (parts.length > 2) ? unescapeCsv(parts[2].trim()) : "";
+                    String ticket = (parts.length > 3) ? unescapeCsv(parts[3].trim()) : "";
+                    double height = 0.0;
+                    if (parts.length > 4) {
+                        try {
+                            height = Double.parseDouble(parts[4].trim());
+                        } catch (NumberFormatException nfe) {
+                            height = 0.0;
+                        }
+                    }
+                    Visitor v = new Visitor(name, age, phone, ticket, height);
+                    rideHistory.add(v);
+                }
+            }
+            System.out.println("Ride history imported from: " + filename);
+        } catch (FileNotFoundException fnf) {
+            System.out.println("Import file not found: " + filename);
+        } catch (IOException ioe) {
+            System.out.println("Error importing: " + ioe.getMessage());
+        } catch (NumberFormatException nfe) {
+            System.out.println("Invalid number in CSV: " + nfe.getMessage());
+        }
+    }
+
+    // simple CSV escape helpers
+    private String escapeCsv(String value) {
         if (value == null) return "";
-        String s = value.trim();
+        String s = value;
         if (s.contains(",") || s.contains("\"") || s.contains("\n")) {
-            // escape quotes by doubling them, and wrap in quotes
             s = s.replace("\"", "\"\"");
-            return "\"" + s + "\"";
+            s = "\"" + s + "\"";
         }
         return s;
     }
 
-    // ===================== Placeholder for Part 5 (runOneCycle) ======================
-    @Override
-    public void runOneCycle() {
-        System.out.println("runOneCycle not implemented in this Ride version.");
+    private String unescapeCsv(String value) {
+        if (value == null) return "";
+        String s = value;
+        s = s.trim();
+        if (s.startsWith("\"") && s.endsWith("\"") && s.length() >= 2) {
+            s = s.substring(1, s.length() - 1).replace("\"\"", "\"");
+        }
+        return s;
     }
 
-    // Expose rideHistory for tests (not required but convenient)
+    // Expose rideHistory if needed
     public LinkedList<Visitor> getRideHistory() {
         return rideHistory;
     }
