@@ -1,54 +1,48 @@
 public class AssignmentTwo {
 
     public static void main(String[] args) {
-        // ===== Step 1: Create Employee (Operator) =====
-        Employee operator = new Employee(
-                "Alice",       // name
-                30,            // age
-                "123456789",   // phone
-                "Operator",    // position
-                5000           // salary
-        );
 
-        Visitor visitor1 = new Visitor("Bob", 20, "987654321", "VIP", 160);
-        Visitor visitor2 = new Visitor("Charlie", 25, "555666777", "Regular", 170);
-        Visitor visitor3 = new Visitor("Diana", 18, "111222333", "VIP", 155);
-        Visitor visitor4 = new Visitor("Ethan", 22, "444555666", "Regular", 165);
-        Visitor visitor5 = new Visitor("Fiona", 19, "777888999", "VIP", 158);
+        // ========== Create Employee (Operator) ==========
+        Employee operator = new Employee("Alice", 30, "123456789", "Operator", 5000);
 
-        Ride rollerCoaster = new Ride("ThunderRide", operator, 5);
+        // ========== Create Visitors ==========
+        Visitor v1 = new Visitor("Bob", 20, "987654321", "VIP", 160);
+        Visitor v2 = new Visitor("Charlie", 25, "555666777", "Regular", 170);
+        Visitor v3 = new Visitor("Diana", 18, "111222333", "VIP", 155);
+        Visitor v4 = new Visitor("Ethan", 22, "444555666", "Regular", 165);
+        Visitor v5 = new Visitor("Fiona", 19, "777888999", "VIP", 158);
 
+        // ========== Create Ride ==========
+        Ride ride = new Ride("ThunderRide", operator);
+
+        // ========== Part 3: Queue Test ==========
         System.out.println("=== Adding visitors to queue ===");
-        rollerCoaster.addVisitorToQueue(visitor1);
-        rollerCoaster.addVisitorToQueue(visitor2);
-        rollerCoaster.addVisitorToQueue(visitor3);
-        rollerCoaster.addVisitorToQueue(visitor4);
-        rollerCoaster.addVisitorToQueue(visitor5);
-        rollerCoaster.printQueue();
+        ride.addVisitorToQueue(v1);
+        ride.addVisitorToQueue(v2);
+        ride.addVisitorToQueue(v3);
+        ride.addVisitorToQueue(v4);
+        ride.addVisitorToQueue(v5);
+        ride.printQueue();
 
         System.out.println("\n=== Removing one visitor from queue ===");
-        rollerCoaster.removeVisitorFromQueue();
-        rollerCoaster.printQueue();
+        ride.removeVisitorFromQueue();
+        ride.printQueue();
 
+        // ========== Part 4A: Ride History Test ==========
         System.out.println("\n=== Adding visitors to ride history ===");
-        rollerCoaster.addVisitorToHistory(visitor1);
-        rollerCoaster.addVisitorToHistory(visitor2);
-        rollerCoaster.addVisitorToHistory(visitor3);
-        rollerCoaster.addVisitorToHistory(visitor4);
-        rollerCoaster.addVisitorToHistory(visitor5);
+        ride.addVisitorToHistory(v1);
+        ride.addVisitorToHistory(v2);
+        ride.addVisitorToHistory(v3);
+        ride.addVisitorToHistory(v4);
+        ride.addVisitorToHistory(v5);
 
-        System.out.println("\n=== Check if a visitor is in ride history ===");
-        System.out.println(visitor3.getName() + " is in ride history? " +
-                rollerCoaster.checkVisitorFromHistory(visitor3));
+        System.out.println("\n=== Check if visitor exists in history ===");
+        System.out.println("Is Diana in history? " + ride.checkVisitorFromHistory(v3));
 
-        System.out.println("\n=== Total number of visitors in history ===");
-        System.out.println("Total visitors: " + rollerCoaster.numberOfVisitors());
+        System.out.println("\n=== Number of visitors in history ===");
+        System.out.println("Total visitors: " + ride.numberOfVisitors());
 
-        System.out.println("\n=== Print ride history ===");
-        rollerCoaster.printRideHistory();
-
-        System.out.println("\n=== Test runOneCycle() method ===");
-        rollerCoaster.runOneCycle();
+        System.out.println("\n=== Printing ride history ===");
+        ride.printRideHistory();
     }
-
 }

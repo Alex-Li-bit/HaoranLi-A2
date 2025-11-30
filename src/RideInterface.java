@@ -1,4 +1,5 @@
 public interface RideInterface {
+
     void addVisitorToQueue(Visitor v);
     void removeVisitorFromQueue();
     void printQueue();

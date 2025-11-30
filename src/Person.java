@@ -1,7 +1,7 @@
 public abstract class Person {
-    private String name;
-    private int age;
-    private String phone;
+    protected String name;
+    protected int age;
+    protected String phone;
 
     public Person() {}
 

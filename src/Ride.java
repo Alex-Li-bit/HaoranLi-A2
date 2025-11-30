@@ -1,51 +1,45 @@
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Ride implements RideInterface {
-    private String rideName;
-    private Employee operator; // 操作员
-    private int maxRider;
 
-    // Part3~Part4B 会使用的队列和历史
-    private Queue<Visitor> visitorQueue = new LinkedList<>();
+    private String rideName;
+    private Employee operator;
+
+    private Queue<Visitor> waitQueue = new LinkedList<>();
     private LinkedList<Visitor> rideHistory = new LinkedList<>();
 
-    public Ride() {}
-
-    public Ride(String rideName, Employee operator, int maxRider) {
+    public Ride(String rideName, Employee operator) {
         this.rideName = rideName;
         this.operator = operator;
-        this.maxRider = maxRider;
     }
 
-    // Getters & Setters
-    public String getRideName() { return rideName; }
-    public void setRideName(String rideName) { this.rideName = rideName; }
-
-    public Employee getOperator() { return operator; }
-    public void setOperator(Employee operator) { this.operator = operator; }
-
-    public int getMaxRider() { return maxRider; }
-    public void setMaxRider(int maxRider) { this.maxRider = maxRider; }
-
-    // ========== RideInterface Methods ==========
+    // ===================== Queue Methods ======================
     @Override
     public void addVisitorToQueue(Visitor v) {
-        visitorQueue.add(v);
+        waitQueue.add(v);
     }
 
     @Override
     public void removeVisitorFromQueue() {
-        visitorQueue.poll();
+        Visitor removed = waitQueue.poll();
+        if (removed != null) {
+            System.out.println("Removed from queue: " + removed.getName());
+        } else {
+            System.out.println("Queue is empty.");
+        }
     }
 
     @Override
     public void printQueue() {
         System.out.println("Visitor Queue:");
-        for (Visitor v : visitorQueue) {
+        for (Visitor v : waitQueue) {
             System.out.println(v.getName() + " (" + v.getAge() + ")");
         }
     }
 
+    // ===================== Ride History Methods ======================
     @Override
     public void addVisitorToHistory(Visitor v) {
         rideHistory.add(v);
@@ -64,13 +58,16 @@ public class Ride implements RideInterface {
     @Override
     public void printRideHistory() {
         System.out.println("Ride History:");
-        for (Visitor v : rideHistory) {
+        Iterator<Visitor> iterator = rideHistory.iterator();
+        while (iterator.hasNext()) {
+            Visitor v = iterator.next();
             System.out.println(v.getName() + " (" + v.getAge() + ")");
         }
     }
 
+    // ===================== Placeholder for Part 5 ======================
     @Override
     public void runOneCycle() {
-        System.out.println("Run one cycle: Not implemented yet for Part 2.");
+        System.out.println("Run one cycle: Not implemented yet (Part 5).");
     }
 }
