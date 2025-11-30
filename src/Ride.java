@@ -1,47 +1,76 @@
-public class Ride {
+import java.util.*;
+
+public class Ride implements RideInterface {
     private String rideName;
-    private int durationSeconds;
-    private Employee operator;
+    private Employee operator; // 操作员
+    private int maxRider;
 
-    public Ride() {
-        this.rideName = "";
-        this.durationSeconds = 0;
-        this.operator = null; // 还未分配操作员
-    }
+    // Part3~Part4B 会使用的队列和历史
+    private Queue<Visitor> visitorQueue = new LinkedList<>();
+    private LinkedList<Visitor> rideHistory = new LinkedList<>();
 
-    public Ride(String rideName, int durationSeconds, Employee operator) {
+    public Ride() {}
+
+    public Ride(String rideName, Employee operator, int maxRider) {
         this.rideName = rideName;
-        this.durationSeconds = durationSeconds;
         this.operator = operator;
+        this.maxRider = maxRider;
     }
 
-    public String getRideName() {
-        return rideName;
-    }
+    // Getters & Setters
+    public String getRideName() { return rideName; }
+    public void setRideName(String rideName) { this.rideName = rideName; }
 
-    public void setRideName(String rideName) {
-        this.rideName = rideName;
-    }
+    public Employee getOperator() { return operator; }
+    public void setOperator(Employee operator) { this.operator = operator; }
 
-    public int getDurationSeconds() {
-        return durationSeconds;
-    }
+    public int getMaxRider() { return maxRider; }
+    public void setMaxRider(int maxRider) { this.maxRider = maxRider; }
 
-    public void setDurationSeconds(int durationSeconds) {
-        this.durationSeconds = durationSeconds;
-    }
-
-    public Employee getOperator() {
-        return operator;
-    }
-
-    public void setOperator(Employee operator) {
-        this.operator = operator;
+    // ========== RideInterface Methods ==========
+    @Override
+    public void addVisitorToQueue(Visitor v) {
+        visitorQueue.add(v);
     }
 
     @Override
-    public String toString() {
-        String opName = (operator == null ? "No operator" : operator.getName());
-        return "Ride[name=" + rideName + ", duration=" + durationSeconds + "s, operator=" + opName + "]";
+    public void removeVisitorFromQueue() {
+        visitorQueue.poll();
+    }
+
+    @Override
+    public void printQueue() {
+        System.out.println("Visitor Queue:");
+        for (Visitor v : visitorQueue) {
+            System.out.println(v.getName() + " (" + v.getAge() + ")");
+        }
+    }
+
+    @Override
+    public void addVisitorToHistory(Visitor v) {
+        rideHistory.add(v);
+    }
+
+    @Override
+    public boolean checkVisitorFromHistory(Visitor v) {
+        return rideHistory.contains(v);
+    }
+
+    @Override
+    public int numberOfVisitors() {
+        return rideHistory.size();
+    }
+
+    @Override
+    public void printRideHistory() {
+        System.out.println("Ride History:");
+        for (Visitor v : rideHistory) {
+            System.out.println(v.getName() + " (" + v.getAge() + ")");
+        }
+    }
+
+    @Override
+    public void runOneCycle() {
+        System.out.println("Run one cycle: Not implemented yet for Part 2.");
     }
 }

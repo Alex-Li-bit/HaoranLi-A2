@@ -1,46 +1,23 @@
 public abstract class Person {
     private String name;
     private int age;
-    private String phoneNumber;
+    private String phone;
 
-    public Person() {
-        this.name = "";
-        this.age = 0;
-        this.phoneNumber = "";
-    }
+    public Person() {}
 
-    public Person(String name, int age, String phoneNumber) {
+    public Person(String name, int age, String phone) {
         this.name = name;
         this.age = age;
-        this.phoneNumber = phoneNumber;
+        this.phone = phone;
     }
 
-    public String getName() {
-        return name;
-    }
+    // Getters & Setters
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "Person[name=" + name + ", age=" + age + ", phone=" + phoneNumber + "]";
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 }
